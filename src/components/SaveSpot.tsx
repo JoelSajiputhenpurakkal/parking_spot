@@ -70,10 +70,19 @@ export function SaveSpot({ onSaved }: SaveSpotProps) {
               ? 'Location picked on map'
               : `GPS locked · ±${Math.round(accuracy)} m accuracy`}
           </span>
+        ) : supported ? (
+          <span>Getting your location…</span>
         ) : (
-          <span>{supported ? 'Getting your location…' : 'Geolocation not supported'}</span>
+          <span>Geolocation not supported</span>
         )}
       </div>
+
+      {position && !manual && accuracy > 50 && (
+        <p className="warn">
+          GPS is only accurate to ±{Math.round(accuracy)} m here — tap the map to drop the pin
+          exactly where you parked.
+        </p>
+      )}
 
       {error && !manual && (
         <p className="warn">
