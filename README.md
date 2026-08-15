@@ -29,13 +29,20 @@ npm run lint
 
 Geolocation and the camera require a secure context: `localhost` works, and any other host needs HTTPS.
 
-## Testing it on your phone
+## Live app
 
-```bash
-npm run build && npm run preview -- --host
-```
+Deployed to GitHub Pages on every push to `main`: **https://joelsajiputhenpurakkal.github.io/parking_spot/**
 
-Serve over HTTPS (e.g. via a tunnel) and open the URL on your phone, then "Add to Home Screen".
+Enable it once under **Settings → Pages → Source → GitHub Actions**.
+
+### Install it on your phone
+
+- **Android (Chrome):** open the link, then menu (⋮) → *Add to Home screen* / *Install app*.
+- **iPhone (Safari — must be Safari):** open the link, tap Share → *Add to Home Screen*.
+
+It then launches fullscreen like a native app, works offline, and asks for location the first time you save a spot.
+
+The Pages URL is served under `/parking_spot/`, which is why `vite.config.ts` sets `base` (override with `BASE_PATH=/ npm run build` if you deploy to a root domain such as Netlify or Vercel).
 
 ## How it works
 
