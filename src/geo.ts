@@ -1,0 +1,55 @@
+const EARTH_RADIUS_M = 6371000
+
+const toRad = (deg: number) => (deg * Math.PI) / 180
+const toDeg = (rad: number) => (rad * 180) / Math.PI
+
+export interface LatLng {
+  lat: number
+  lng: number
+}
+
+/** Great-circle distance in metres. */
+export function distanceMeters(a: LatLng, b: LatLng): number {
+  const dLat = toRad(b.lat - a.lat)
+  const dLng = toRad(b.lng - a.lng)
+  const lat1 = toRad(a.lat)
+  const lat2 = toRad(b.lat)
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2
+  return 2 * EARTH_RADIUS_M * Math.asin(Math.sqrt(h))
+}
+
+/** Initial bearing from `a` to `b`, in degrees clockwise from true north. */
+export function bearingDegrees(a: LatLng, b: LatLng): number {
+  const lat1 = toRad(a.lat)
+  const lat2 = toRad(b.lat)
+  const dLng = toRad(b.lng - a.lng)
+  const y = Math.sin(dLng) * Math.cos(lat2)
+  const x =
+    Math.cos(lat1) * Math.sin(lat2) -
+    Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng)
+  return (toDeg(Math.atan2(y, x)) + 360) % 360
+}
+
+export function formatDistance(meters: number): string {
+  if (meters < 1000) return `${Math.round(meters)} m`
+  return `${(meters / 1000).toFixed(2)} km`
+}
+
+export function walkingMinutes(meters: number): number {
+  return Math.max(1, Math.round(meters / 80))
+}
+
+export function compassLabel(bearing: number): string {
+  const points = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
+  return points[Math.round(bearing / 45) % 8]
+}
+
+export function directionsUrl(target: LatLng): string {
+  const isApple = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent)
+  if (isApple) {
+    return `https://maps.apple.com/?daddr=${target.lat},${target.lng}&dirflg=w`
+  }
+  return `https://www.google.com/maps/dir/?api=1&destination=${target.lat},${target.lng}&travelmode=walking`
+}
